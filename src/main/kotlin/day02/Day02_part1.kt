@@ -1,5 +1,6 @@
 package day02
 
+import kotlin.math.abs
 import printOutput
 import printTestOutput
 import readInput
@@ -10,8 +11,29 @@ fun main() {
     val part = 1
     println("\nExecuting part $part of day $day\n\n")
 
+    fun parseInput(input: List<String>): List<List<Int>> {
+        return input.map { line ->
+            line.split(' ').map { it.toInt() }
+        }
+    }
+
+    fun isSafeReport(report: List<Int>): Boolean {
+        val windowed = report.windowed(2, 1)
+        var isDescending: Boolean? = null
+
+        windowed.forEachIndexed { index, (l, r) ->
+            if (abs(l - r) < 1 || abs(l - r) > 3) return false
+            if (index == 0) isDescending = l - r < 0
+            if (isDescending == true && l - r > 0) return false
+            if (isDescending == false && l - r < 0) return false
+        }
+        return true
+    }
+
     fun solvePuzzle(input: List<String>): Int {
-        return input.size
+        val levelsPerReport = parseInput(input)
+        val safeReports = levelsPerReport.count { isSafeReport(it) }
+        return safeReports
     }
 
     val testInput = readTestInput(day)
