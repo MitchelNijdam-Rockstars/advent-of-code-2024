@@ -8,18 +8,18 @@ import readTestInput
 fun main() {
     val day = 0
     val part = 1
-    println("\n\n")
+    println("\nExecuting part $part of day $day\n\n")
 
     fun solvePuzzle(input: List<String>): Int {
         return input.size
     }
 
-    val testInput = readTestInput(day, part)
+    val testInput = readTestInput(day)
     val testSolution = solvePuzzle(testInput)
 
     printTestOutput(testInput, testSolution)
 
-    val input = readInput(day, part)
+    val input = readInput(day)
     val solution = solvePuzzle(input)
 
     printOutput(solution)

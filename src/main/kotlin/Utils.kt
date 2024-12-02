@@ -9,11 +9,11 @@ const val SRC_PATH = "src/main/kotlin"
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(day: Int, part: Int) =
-    Path("$SRC_PATH/day${day.toDayString()}/Day${day.toDayString()}_part$part.txt").readLines()
+fun readInput(day: Int) =
+    Path("$SRC_PATH/day${day.toDayString()}/Day${day.toDayString()}_values.txt").readLines()
 
-fun readTestInput(day: Int, part: Int) =
-    Path("$SRC_PATH/day${day.toDayString()}/Day${day.toDayString()}_part${part}_test.txt").readLines()
+fun readTestInput(day: Int) =
+    Path("$SRC_PATH/day${day.toDayString()}/Day${day.toDayString()}_values_test.txt").readLines()
 
 private fun Int.toDayString(): String = this.toString().padStart(2, '0')
 
