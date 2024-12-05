@@ -73,3 +73,9 @@ private val numberRegex = Regex("(\\d+)")
 fun findAllNumbers(input: String): List<Long> {
     return numberRegex.findAll(input).map { it.value.toLong() }.toList()
 }
+
+fun <T> List<T>.getAllPairs(): List<Pair<T, T>> {
+    return this.flatMapIndexed { index, entry ->
+        this.drop(index + 1).map { entry to it }
+    }
+}
