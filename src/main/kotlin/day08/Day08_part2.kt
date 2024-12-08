@@ -7,11 +7,83 @@ import readTestInput
 
 fun main() {
     val day = 8
-    val part = 2
+    val part = 1
     println("\nExecuting part $part of day $day\n\n")
 
+
+    data class GridLocation(
+        val x: Int,
+        val y: Int
+    ) {
+        fun isFirst(other: GridLocation): Boolean {
+            return this.y < other.y || (this.y == other.y && this.x < other.x)
+        }
+
+        fun getIfInsideGrid(width: Int, height: Int): GridLocation? {
+            return if (this.x < 0 || this.y < 0 || this.x >= width || this.y >= height) null else this
+        }
+    }
+
+    data class Antenna(
+        val frequency: Char,
+        val location: GridLocation
+    )
+
+    fun parseInput(input: List<String>): List<Antenna> {
+        return input.flatMapIndexed { y, line ->
+            line.mapIndexed { x, place ->
+                if (place == '.') return@mapIndexed null
+                Antenna(
+                    frequency = place,
+                    GridLocation(x, y)
+                )
+            }.filterNotNull()
+        }
+    }
+
+    fun getPairs(antennas: List<Antenna>): List<Pair<Antenna, Antenna>> {
+        return antennas.flatMapIndexed { index, antenna ->
+            antennas.drop(index + 1).map { antenna to it }
+        }
+    }
+
+    fun caculateAntinodes(antennas: List<Pair<Antenna, Antenna>>, width: Int, height: Int): List<GridLocation> {
+        return antennas.flatMap { (antenna1, antenna2) ->
+            val (firstAntenna, secondAntenna) = if (antenna1.location.isFirst(antenna2.location)) antenna1 to antenna2 else antenna2 to antenna1
+            val deltaX = secondAntenna.location.x - firstAntenna.location.x
+            val deltaY = secondAntenna.location.y - firstAntenna.location.y
+
+            val antinodes = mutableListOf<GridLocation>()
+
+            for (i in (0..height)) {
+                val antinode1 = GridLocation(
+                    x = firstAntenna.location.x - (i * deltaX),
+                    y = firstAntenna.location.y - (i * deltaY)
+                ).getIfInsideGrid(width, height)
+                val antinode2 = GridLocation(
+                    x = secondAntenna.location.x + (i * deltaX),
+                    y = secondAntenna.location.y + (i * deltaY)
+                ).getIfInsideGrid(width, height)
+
+                if (antinode1 == null && antinode2 == null) break
+                antinodes.addAll(listOfNotNull(antinode1, antinode2))
+            }
+
+            antinodes
+        }
+    }
+
     fun solvePuzzle(input: List<String>): Int {
-        return input.size
+        val width = input.first().length
+        val height = input.size
+
+        val antennas = parseInput(input)
+        val antennaGroups = antennas.groupBy { it.frequency }
+        return antennaGroups.flatMap { (_, antennas) ->
+            val antennaPairs = getPairs(antennas)
+            val antinodes = caculateAntinodes(antennaPairs, width, height)
+            antinodes
+        }.distinct().count()
     }
 
     val testInput = readTestInput(day)
@@ -23,4 +95,6 @@ fun main() {
     val solution = solvePuzzle(input)
 
     printOutput(solution)
+
+
 }
